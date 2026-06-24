@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stwira's Birthday Celebration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@100;300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --silver-metal: linear-gradient(90deg, #707070 0%, #e0e0e0 45%, #ffffff 50%, #e0e0e0 55%, #707070 100%);
+            --silver-static: #c0c0c0;
+            --dark-deep: #050505;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #000;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- LUXURY SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--dark-deep);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: all 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* Efek Bingkai Silver Tipis */
+        .splash-frame {
+            position: relative;
+            width: 85%;
+            height: 80%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .splash-frame::before, .splash-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            border: 1px solid var(--silver-static);
+        }
+
+        .splash-frame::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .splash-frame::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        .splash-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            letter-spacing: 15px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: var(--silver-metal);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: silverShimmer 4s linear infinite;
+        }
+
+        .splash-subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 8px;
+            color: var(--silver-static);
+            text-transform: uppercase;
+            font-weight: 300;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+
+        /* Progress Bar Silver */
+        .loading-container {
+            width: 180px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--silver-metal);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: loadProgress 3s forwards cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tap-instruction {
+            font-size: 0.65rem;
+            letter-spacing: 5px;
+            color: #ffffff;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s forwards ease-in-out 2.8s, pulseText 2s infinite 3.5s;
+        }
+
+        /* --- VIDEO CONTAINER --- */
+        #video-container {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background-color: #000;
+            opacity: 0;
+            transform: scale(1.1);
+            transition: all 1.8s ease;
+        }
+
+        #video-container.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        video {
+            width: 100%; height: 100%;
+            object-fit: contain;
+        }
+
+        /* --- CONTROLS --- */
+        #custom-controls {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            transition: 1s ease 1.5s;
+        }
+
+        .active #custom-controls { opacity: 1; }
+
+        .ctrl-btn {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 12px 25px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .ctrl-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        /* ANIMATIONS */
+        @keyframes silverShimmer {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes loadProgress {
+            to { width: 100%; }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 0.6; }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        .fade-out-luxury {
+            opacity: 0 !important;
+            visibility: hidden;
+            transform: scale(1.1);
+        }
+
+        @media (min-width: 768px) {
+            video { max-width: 500px; }
+            .splash-title { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body onclick="openInvitation()">
+
+    <!-- SPLASH SCREEN LUXURY -->
+    <div id="splash-screen">
+        <div class="splash-frame">
+            <h1 class="splash-title">STWIRA</h1>
+            <p class="splash-subtitle">Birthday Celebration</p>
+            
+            <div class="loading-container">
+                <div class="loading-bar"></div>
+            </div>
+            
+            <p class="tap-instruction">Click to reveal</p>
+        </div>
+    </div>
+
+    <!-- VIDEO AREA -->
+    <div id="video-container">
+        <video id="invitation-video" playsinline loop>
+            <source src="https://ik.imagekit.io/p27ub3udc/Glamp%20party_2.mp4?updatedAt=1782218125706" type="video/mp4">
+        </video>
+
+        <div id="custom-controls" onclick="event.stopPropagation();">
+            <button class="ctrl-btn" onclick="togglePlay(this)">Pause</button>
+            <button class="ctrl-btn" id="dl-btn" onclick="downloadVideo()">Download</button>
+        </div>
+    </div>
+
+    <script>
+        let isOpened = false;
+        const video = document.getElementById('invitation-video');
+        const videoUrl = 'https://ik.imagekit.io/p27ub3udc/Glamp%20party_2.mp4?updatedAt=1782218125706';
+
+        function openInvitation() {
+            if (isOpened) return; 
+            isOpened = true;
+
+            const splash = document.getElementById('splash-screen');
+            const container = document.getElementById('video-container');
+
+            splash.classList.add('fade-out-luxury');
+            container.classList.add('active');
+
+            setTimeout(() => {
+                video.play();
+            }, 500); 
+        }
+
+        function togglePlay(btn) {
+            if (video.paused) {
+                video.play();
+                btn.innerText = "Pause";
+            } else {
+                video.pause();
+                btn.innerText = "Play";
+            }
+        }
+
+        function downloadVideo() {
+            const btn = document.getElementById('dl-btn');
+            btn.innerText = "Processing...";
+            
+            fetch(videoUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "Stwira_Invitation.mp4";
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    btn.innerText = "Download";
+                })
+                .catch(() => {
+                    alert("Gagal download. Coba lagi.");
+                    btn.innerText = "Download";
+                });
+        }
+    </script>
+</body>
+</html>
