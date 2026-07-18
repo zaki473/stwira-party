@@ -136,30 +136,76 @@
         #custom-controls {
             position: absolute;
             bottom: 40px;
-            display: flex;
-            gap: 15px;
+            right: 40px;
             opacity: 0;
             transition: 1s ease 1.5s;
         }
 
         .active #custom-controls { opacity: 1; }
 
-        .ctrl-btn {
+        .menu-btn {
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
-            padding: 12px 25px;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
             transition: 0.3s;
+            position: relative;
         }
 
-        .ctrl-btn:hover {
-            background: #fff;
-            color: #000;
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 150px;
+            display: none;
+            z-index: 100;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.2s;
+            color: #fff;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* ANIMATIONS */
@@ -210,20 +256,24 @@
 
     <!-- VIDEO AREA -->
     <div id="video-container">
-        <video id="invitation-video" playsinline loop>
-            <source src="https://ik.imagekit.io/p27ub3udc/Glamp%20party_2.mp4?updatedAt=1782218125706" type="video/mp4">
+        <video id="invitation-video" playsinline loop preload="auto">
+            <source src="./Glamp_party_4.mp4" type="video/mp4">
+            Browser Anda tidak mendukung video. Silakan gunakan browser terbaru.
         </video>
 
         <div id="custom-controls" onclick="event.stopPropagation();">
-            <button class="ctrl-btn" onclick="togglePlay(this)">Pause</button>
-            <button class="ctrl-btn" id="dl-btn" onclick="downloadVideo()">Download</button>
+            <button class="menu-btn" onclick="toggleMenu()">⋮</button>
+            <div class="dropdown-menu" id="dropdown-menu">
+                <div class="menu-item" onclick="togglePlay()">Pause</div>
+                <div class="menu-item" onclick="downloadVideo()">Download</div>
+            </div>
         </div>
     </div>
 
     <script>
         let isOpened = false;
         const video = document.getElementById('invitation-video');
-        const videoUrl = 'https://ik.imagekit.io/p27ub3udc/Glamp%20party_2.mp4?updatedAt=1782218125706';
+        const videoUrl = './Glamp_party_4.mp4';
 
         function openInvitation() {
             if (isOpened) return; 
@@ -240,19 +290,30 @@
             }, 500); 
         }
 
-        function togglePlay(btn) {
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.classList.toggle('active');
+        }
+
+        function togglePlay() {
+            const menu = document.getElementById('dropdown-menu');
+            const item = menu.querySelector('.menu-item');
+            
             if (video.paused) {
                 video.play();
-                btn.innerText = "Pause";
+                item.innerText = "Pause";
             } else {
                 video.pause();
-                btn.innerText = "Play";
+                item.innerText = "Play";
             }
+            menu.classList.remove('active');
         }
 
         function downloadVideo() {
-            const btn = document.getElementById('dl-btn');
-            btn.innerText = "Processing...";
+            const menu = document.getElementById('dropdown-menu');
+            const item = menu.querySelectorAll('.menu-item')[1];
+            const originalText = item.innerText;
+            item.innerText = "Processing...";
             
             fetch(videoUrl)
                 .then(res => res.blob())
@@ -264,13 +325,20 @@
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
-                    btn.innerText = "Download";
+                    item.innerText = originalText;
                 })
                 .catch(() => {
                     alert("Gagal download. Coba lagi.");
-                    btn.innerText = "Download";
+                    item.innerText = originalText;
                 });
+            
+            menu.classList.remove('active');
         }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', () => {
+            document.getElementById('dropdown-menu').classList.remove('active');
+        });
     </script>
 </body>
 </html>
